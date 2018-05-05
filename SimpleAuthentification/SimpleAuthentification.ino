@@ -99,58 +99,59 @@ void handleNotFound() {
 
 void sendWifiNetworks() {
 
+  String message = "[";
+  String networksJSON = "";
+
   Serial.println("scan start");
   int n = WiFi.scanNetworks();
+  int f = 0;
   Serial.println("scan done");
+
   if (n == 0) {
     Serial.println("no networks found");
   } else {
     Serial.print(n);
-    Serial.println(" networks found");
+    Serial.println(" networks found \n");
+
     for (int i = 0; i < n; ++i) {
+      message += " \"";
       // Print SSID and RSSI for each network found
       Serial.print(i + 1);
       Serial.print(": ");
       Serial.print(WiFi.SSID(i));
+      Serial.print("\n");
+      message += WiFi.SSID(i);
+      message += "\",";
       delay(10);
     }
+    f = message.length();
+    message.remove(f - 1);
+    message += "]";
+    networksJSON = message;
   }
 
-  String a = "DEU BOM!";
-  server.send(200, "text/plain",  a);
+  Serial.print(message);
+  server.send(200, "application/json", networksJSON);
 }
 
-void parseJSON() {
-  char JSONMessage[] = " [{\"SensorType\": \"Temperature\"}, {\"Value\": 10}]";
-  Serial.print("Initial string value: ");
-  Serial.println(JSONMessage);
-  StaticJsonBuffer<300> JSONBuffer;   //Memory pool
 
-  JsonObject& parsed = JSONBuffer.parseObject(JSONMessage); //Parse message
 
-  if (!parsed.success()) {   //Check for errors in parsing
-
-    Serial.println("Parsing failed");
-    delay(5000);
-    return;
-  }
-
-  const char * sensorType = parsed["SensorType"]; //Get sensor type value
-  int value = parsed["Value"];
-  Serial.println(sensorType);
-  Serial.println(value);
-
-  String a = "DEU BOM!";
-  return;
+char handleParserJSON(char *stringJSON, char stringInsert)
+{
+  String message = "{ ";
+  message += " value=";
+  message += " }";
+  server.send(200, "application/json", message);
 }
+
+
+
 
 void setup(void) {
   Serial.begin(115200);
   WiFi.mode(WIFI_STA);
   WiFi.softAP(ssid, password);
   Serial.println("");
-  parseJSON();
-
   //  // Wait for connection
   //  while (WiFi.status() != WL_CONNECTED) {
   //    delay(500);
