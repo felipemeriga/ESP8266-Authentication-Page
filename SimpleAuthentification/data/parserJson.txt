@@ -1,0 +1,30 @@
+
+void handleParserJSON(char *stringJSON, char stringInsert[]){
+	*stringJSON +="[";
+
+	int n =	sizeof(stringInsert)/sizeof(stringInsert[])
+	
+	for(i = 0; i < n; ++i){
+		*stringJSON += "\" "
+		*stringJSON += stringInsert	
+		*stringJSON += "\" "
+	}
+
+	*stringJSON += "]"
+}
+
+
+void parseJSON() {
+  char JSONMessage[] = " [{\"SensorType\": \"Temperature\"}, {\"Value\": 10}]";
+  Serial.print("Initial string value: ");
+  Serial.println(JSONMessage);
+  StaticJsonBuffer<300> JSONBuffer;   //Memory pool
+
+  JsonObject& parsed = JSONBuffer.parseObject(JSONMessage); //Parse message
+
+  if (!parsed.success()) {   //Check for errors in parsing
+
+    Serial.println("Parsing failed");
+    delay(5000);
+    return;
+  }
